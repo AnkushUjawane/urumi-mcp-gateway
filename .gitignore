@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.env
+.env.*
+*.local.secret.yaml
+secrets/
+*.pem
+*.key
+kubeconfig*
+.DS_Store
