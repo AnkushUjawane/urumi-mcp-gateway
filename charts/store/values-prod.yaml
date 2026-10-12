@@ -1,0 +1,11 @@
+scheme: https
+ingress:
+  host: shop.example.com            # CHANGE to your VPS domain
+  tls:
+    enabled: true
+    clusterIssuer: letsencrypt-prod
+existingSecret: store-secrets-prod  # created out-of-band, never in git
+persistence:
+  storageClass: local-path
+  mariadb: { size: 10Gi }
+  wordpress: { size: 20Gi }

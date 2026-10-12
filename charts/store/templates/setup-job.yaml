@@ -1,0 +1,54 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: store-setup
+  annotations:
+    helm.sh/hook: post-install,post-upgrade
+    helm.sh/hook-delete-policy: before-hook-creation
+spec:
+  backoffLimit: 4
+  ttlSecondsAfterFinished: 3600
+  template:
+    spec:
+      restartPolicy: OnFailure
+      securityContext:
+        runAsUser: 33
+        runAsGroup: 33
+      containers:
+        - name: setup
+          image: {{ .Values.setupJob.image }}
+          command: ["/bin/sh", "/scripts/setup.sh"]
+          env:
+            {{- include "store.wpEnv" . | nindent 12 }}
+            - name: HOME
+              value: /tmp
+            - name: WP_CLI_CACHE_DIR
+              value: /tmp/wp-cli-cache
+            - name: STORE_TITLE
+              value: {{ .Values.store.title | quote }}
+            - name: STORE_COUNTRY
+              value: {{ .Values.store.country | quote }}
+            - name: STORE_CURRENCY
+              value: {{ .Values.store.currency | quote }}
+            - name: WP_ADMIN_USER
+              value: {{ .Values.store.adminUser | quote }}
+            - name: WP_ADMIN_EMAIL
+              value: {{ .Values.store.adminEmail | quote }}
+            - name: WP_ADMIN_PASSWORD
+              valueFrom: { secretKeyRef: { name: {{ include "store.secretName" . }}, key: wp-admin-password } }
+            - name: WOO_CONSUMER_KEY
+              valueFrom: { secretKeyRef: { name: {{ include "store.secretName" . }}, key: woo-consumer-key } }
+            - name: WOO_CONSUMER_SECRET
+              valueFrom: { secretKeyRef: { name: {{ include "store.secretName" . }}, key: woo-consumer-secret } }
+            - name: WOO_VERSION
+              value: {{ .Values.store.wooVersion | quote }}
+          resources:
+            {{- toYaml .Values.setupJob.resources | nindent 12 }}
+          volumeMounts:
+            - { name: wp-data, mountPath: /var/www/html }
+            - { name: scripts, mountPath: /scripts }
+      volumes:
+        - name: wp-data
+          persistentVolumeClaim: { claimName: wordpress-data }
+        - name: scripts
+          configMap: { name: store-setup-scripts }

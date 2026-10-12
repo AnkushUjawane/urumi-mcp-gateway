@@ -1,0 +1,5 @@
+apiVersion: v2
+name: store
+description: WooCommerce store (WordPress + MariaDB) with automated setup
+version: 0.1.0
+appVersion: "6"

@@ -1,0 +1,46 @@
+scheme: http
+
+ingress:
+  enabled: true
+  className: traefik
+  host: shop.localtest.me
+  tls:
+    enabled: false
+    secretName: store-tls
+    clusterIssuer: ""
+
+# If set, Helm does NOT create the Secret; you create it yourself.
+# Required keys: db-password, db-root-password, wp-admin-password,
+#                woo-consumer-key, woo-consumer-secret
+existingSecret: ""
+
+store:
+  wooVersion: "10.2.2"
+  title: "Urumi Store"
+  adminUser: admin
+  adminEmail: admin@example.com
+  currency: USD
+  country: US
+
+persistence:
+  storageClass: ""
+  mariadb: { size: 2Gi }
+  wordpress: { size: 5Gi }
+
+mariadb:
+  image: mariadb:11.4
+  resources:
+    requests: { cpu: 100m, memory: 256Mi }
+    limits: { cpu: 500m, memory: 512Mi }
+
+wordpress:
+  image: wordpress:6-apache
+  resources:
+    requests: { cpu: 200m, memory: 256Mi }
+    limits: { cpu: "1", memory: 768Mi }
+
+setupJob:
+  image: wordpress:cli
+  resources:
+    requests: { cpu: 100m, memory: 128Mi }
+    limits: { cpu: 500m, memory: 512Mi }
