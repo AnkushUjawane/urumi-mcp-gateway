@@ -1,0 +1,5 @@
+servers:
+  notes:
+    image: registry.example.com/notes-mcp   # CHANGE: your registry
+  utils:
+    image: registry.example.com/utils-mcp   # CHANGE: your registry

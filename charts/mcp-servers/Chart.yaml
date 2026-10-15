@@ -1,0 +1,5 @@
+apiVersion: v2
+name: mcp-servers
+description: Upstream MCP servers (notes, utils) that the gateway connects to
+version: 0.1.0
+appVersion: "0.1.0"

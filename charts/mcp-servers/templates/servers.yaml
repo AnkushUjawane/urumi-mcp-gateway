@@ -1,0 +1,57 @@
+{{- range $name, $cfg := .Values.servers }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $name }}-mcp
+spec:
+  type: ClusterIP
+  selector: { app: {{ $name }}-mcp }
+  ports:
+    - port: 3000
+      targetPort: 3000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $name }}-mcp
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: {{ $name }}-mcp }
+  template:
+    metadata:
+      labels: { app: {{ $name }}-mcp }
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+      containers:
+        - name: server
+          image: "{{ $cfg.image }}:{{ $cfg.tag }}"
+          ports:
+            - containerPort: 3000
+          env:
+            - name: PORT
+              value: "3000"
+            - name: SERVER_NAME
+              value: {{ $name }}-mcp
+            {{- if $cfg.auth }}
+            - name: AUTH_TOKEN
+              valueFrom: { secretKeyRef: { name: mcp-server-tokens, key: {{ $name }}-token } }
+            {{- end }}
+          readinessProbe:
+            httpGet: { path: /healthz, port: 3000 }
+            initialDelaySeconds: 3
+            periodSeconds: 10
+          livenessProbe:
+            httpGet: { path: /healthz, port: 3000 }
+            initialDelaySeconds: 10
+            periodSeconds: 20
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: { drop: ["ALL"] }
+          resources:
+            {{- toYaml $.Values.resources | nindent 12 }}
+{{- end }}

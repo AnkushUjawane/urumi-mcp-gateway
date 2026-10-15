@@ -1,0 +1,13 @@
+servers:
+  notes:
+    image: urumi-registry:5000/notes-mcp
+    tag: "0.1.0"
+    auth: true            # requires "Authorization: Bearer <token>"
+  utils:
+    image: urumi-registry:5000/utils-mcp
+    tag: "0.1.0"
+    auth: false
+
+resources:
+  requests: { cpu: 25m, memory: 48Mi }
+  limits: { cpu: 200m, memory: 128Mi }
