@@ -1,0 +1,14 @@
+existingSecret: ""     # prod: create it yourself, never in git
+
+admin:
+  email: admin@example.com
+
+persistence:
+  storageClass: ""
+  postgres: { size: 2Gi }
+
+postgres:
+  image: postgres:16-alpine
+  resources:
+    requests: { cpu: 100m, memory: 192Mi }
+    limits: { cpu: 500m, memory: 384Mi }

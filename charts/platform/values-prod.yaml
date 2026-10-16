@@ -1,0 +1,6 @@
+existingSecret: platform-secrets-prod
+admin:
+  email: you@yourdomain.com          # CHANGE
+persistence:
+  storageClass: local-path
+  postgres: { size: 10Gi }
