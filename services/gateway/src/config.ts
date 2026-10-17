@@ -11,6 +11,7 @@ const schema = z.object({
   ADMIN_PASSWORD: z.string().min(8),
   UPSTREAM_LIST_TIMEOUT_MS: z.coerce.number().int().default(3000),
   UPSTREAM_CALL_TIMEOUT_MS: z.coerce.number().int().default(15000),
+  SEED_WOO_URL: z.string().url().optional(),
 });
 
 const parsed = schema.safeParse(process.env);

@@ -1,3 +1,5 @@
+import { serverRoutes } from "./routes/servers.js";
+import { seedServers } from "./seed.js";
 import cookie from "@fastify/cookie";
 import { authRoutes } from "./routes/auth.js";
 import { bootstrapAdmin } from "./auth/bootstrap.js";
@@ -10,6 +12,7 @@ const app = Fastify({ logger: true });
 
 await app.register(cookie);
 await app.register(authRoutes);
+await app.register(serverRoutes);
 
 // Liveness: "is the process alive?" Never touches the DB, so a DB outage
 // doesn't make Kubernetes restart the gateway pointlessly.
@@ -29,6 +32,7 @@ async function main() {
   await waitForDb();
   await migrate((m) => app.log.info(m));
   await bootstrapAdmin((m) => app.log.info(m));
+  await seedServers((m) => app.log.info(m));
   await app.listen({ port: config.PORT, host: "0.0.0.0" });
 }
 
