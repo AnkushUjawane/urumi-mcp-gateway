@@ -1,11 +1,9 @@
 // Validates an admin-supplied upstream URL. Upstreams legitimately live INSIDE the cluster,
-// so we cannot simply block private addresses. This first version blocks the obvious dangers;
-// Phase 7 replaces it with a stricter allow-list plus DNS resolution checks.
-const BLOCKED_HOSTS = new Set([
-  "169.254.169.254",          // cloud metadata (AWS, GCP, Azure)
-  "metadata.google.internal",
-  "localhost", "127.0.0.1", "0.0.0.0", "::1",
-]);
+// so we cannot simply block private addresses. Phase 7 replaces this with a stricter
+// allow-list plus DNS resolution checks.
+const DEV_LOOPBACK = process.env.DEV_ALLOW_LOOPBACK === "true"; // local development only
+const LOOPBACK = new Set(["localhost", "127.0.0.1", "0.0.0.0", "::1", "[::1]"]);
+const BLOCKED_HOSTS = new Set(["169.254.169.254", "metadata.google.internal"]);
 
 export function validateUpstreamUrl(raw: string): string | null {
   let u: URL;
@@ -14,5 +12,6 @@ export function validateUpstreamUrl(raw: string): string | null {
   if (u.username || u.password) return "credentials in the URL are not allowed; use the credential field";
   const host = u.hostname.toLowerCase();
   if (BLOCKED_HOSTS.has(host) || host.startsWith("169.254.")) return `host ${host} is not allowed`;
-  return null; // null = OK
+  if (LOOPBACK.has(host) && !DEV_LOOPBACK) return `host ${host} is not allowed`;
+  return null;
 }

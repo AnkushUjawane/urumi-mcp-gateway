@@ -1,3 +1,4 @@
+import { refreshAll } from "../mcp/manager.js";
 import type { FastifyInstance } from "fastify";
 import { z } from "zod";
 import { pool } from "../db.js";
@@ -72,6 +73,7 @@ export async function serverRoutes(app: FastifyInstance) {
          VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *`,
         [d.slug, d.name, d.url, d.auth_type, d.header_name ?? null,
          d.credential ? encrypt(d.credential) : null, d.enabled]);
+      refreshAll().catch(() => {});
       return reply.code(201).send(view(rows[0], true));
     } catch (e: any) {
       if (e.code === "23505") return reply.code(409).send({ error: `slug '${d.slug}' already exists` });
@@ -107,6 +109,7 @@ export async function serverRoutes(app: FastifyInstance) {
               status='unknown', status_reason=NULL
         WHERE id=$1 RETURNING *`,
       [id, p.name ?? cur.name, url, auth_type, auth_type === "header" ? header_name : null, credential_enc, enabled]);
+    refreshAll().catch(() => {});
     return view(rows[0], true);
   });
 
@@ -114,6 +117,7 @@ export async function serverRoutes(app: FastifyInstance) {
     const { id } = req.params as { id: string };
     if (!UUID.test(id)) return reply.code(400).send({ error: "bad id" });
     const { rowCount } = await pool.query("DELETE FROM servers WHERE id = $1", [id]);
+    refreshAll().catch(() => {});
     return rowCount ? { deleted: true } : reply.code(404).send({ error: "server not found" });
   });
 }
