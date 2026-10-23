@@ -1,3 +1,4 @@
+import { mcpEndpoint } from "./mcp/endpoint.js";
 import { gatewayApiRoutes } from "./routes/gatewayApi.js";
 import { auditRoutes } from "./routes/audit.js";
 import { toolRoutes } from "./routes/tools.js";
@@ -20,6 +21,7 @@ await app.register(serverRoutes);
 await app.register(toolRoutes);
 await app.register(gatewayApiRoutes);
 await app.register(auditRoutes);
+await app.register(mcpEndpoint);
 
 // Liveness: "is the process alive?" Never touches the DB, so a DB outage
 // doesn't make Kubernetes restart the gateway pointlessly.
