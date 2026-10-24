@@ -31,3 +31,17 @@ export type ApiKey = {
   created_at: string; last_used_at: string | null; revoked_at: string | null;
 };
 export type NewKey = ApiKey & { key: string };  // `key` exists only in the creation response
+
+export type AuditStatus = "ok" | "error" | "timeout" | "denied";
+export type AuditRow = {
+  id: string;                    // bigserial arrives as a string
+  ts: string;
+  user_email: string | null;
+  source: "mcp" | "chat" | "api";
+  server_slug: string | null;
+  tool: string;
+  duration_ms: number;
+  status: AuditStatus;
+  error_message: string | null;
+};
+export type AuditResponse = { rows: AuditRow[]; next_before: string | null };
