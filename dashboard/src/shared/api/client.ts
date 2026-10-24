@@ -1,5 +1,6 @@
 export class ApiError extends Error {
-  constructor(public status: number, message: string) { super(message); }
+  status: number;
+  constructor(status: number, message: string) { super(message); this.status = status; }
 }
 
 // The only place that calls fetch. Same-origin requests carry the httpOnly session cookie automatically.
