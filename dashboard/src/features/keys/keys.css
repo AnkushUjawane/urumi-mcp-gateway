@@ -1,0 +1,7 @@
+.inline-form { display: flex; gap: 8px; margin: 16px 0; }
+.inline-form input { flex: 1; max-width: 360px; }
+.fresh { border-color: #f59e0b; background: #fffbeb; display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+.table { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid #e3e6ea; border-radius: 10px; overflow: hidden; margin-top: 16px; }
+.table th, .table td { text-align: left; padding: 10px 12px; border-bottom: 1px solid #eef0f3; font-size: 0.9rem; }
+.table th { background: #f9fafb; }
+.dim { opacity: 0.55; }

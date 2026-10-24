@@ -1,0 +1,2 @@
+.copybox-row { display: flex; gap: 8px; }
+.copybox-row input { flex: 1; font-family: ui-monospace, monospace; font-size: 0.85rem; }

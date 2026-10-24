@@ -20,3 +20,14 @@ export type Server = {
 };
 
 export type ToolSummary = { name: string; description: string };
+
+export type Member = {
+  id: string; email: string; role: Role;
+  created_at: string; disabled_at: string | null; active_keys: number;
+};
+export type Invite = { id: string; email: string; role: Role; expires_at: string };
+export type ApiKey = {
+  id: string; name: string; prefix: string;
+  created_at: string; last_used_at: string | null; revoked_at: string | null;
+};
+export type NewKey = ApiKey & { key: string };  // `key` exists only in the creation response
