@@ -11,7 +11,7 @@ export async function authRoutes(app: FastifyInstance) {
     const body = z.object({ email: z.string().email(), password: z.string().min(1) }).safeParse(req.body);
     if (!body.success) return reply.code(400).send({ error: "email and password required" });
     const { rows } = await pool.query(
-      "SELECT id, email, role, password_hash FROM users WHERE email = $1 AND disabled_at IS NULL",
+      "SELECT id, email, role, password_hash FROM users WHERE lower(email) = lower($1) AND disabled_at IS NULL",
       [body.data.email]);
     const u = rows[0];
     // Same message for "no such user" and "wrong password", so the response doesn't reveal which emails exist.

@@ -1,3 +1,6 @@
+import { inviteRoutes } from "./routes/invites.js";
+import { userRoutes } from "./routes/users.js";
+import { originCheck } from "./auth/csrf.js";
 import { mcpEndpoint } from "./mcp/endpoint.js";
 import { gatewayApiRoutes } from "./routes/gatewayApi.js";
 import { auditRoutes } from "./routes/audit.js";
@@ -15,6 +18,10 @@ import { migrate } from "./migrate.js";
 
 const app = Fastify({ logger: true });
 
+app.addHook("onRequest", originCheck);
+
+await app.register(inviteRoutes);
+await app.register(userRoutes);
 await app.register(cookie);
 await app.register(authRoutes);
 await app.register(serverRoutes);
