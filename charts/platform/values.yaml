@@ -12,3 +12,41 @@ postgres:
   resources:
     requests: { cpu: 100m, memory: 192Mi }
     limits: { cpu: 500m, memory: 384Mi }
+
+gateway:
+  image:
+    repository: urumi-registry:5000/gateway
+    tag: "0.1.0"
+  seedWooUrl: http://woo-mcp.store.svc.cluster.local:3000/mcp
+  cookieSecure: "false"        # prod: "true" (HTTPS only)
+  resources:
+    requests: { cpu: 100m, memory: 128Mi }
+    limits: { cpu: 500m, memory: 256Mi }
+
+ingress:
+  enabled: true
+  className: traefik
+  host: app.localtest.me
+  tls:
+    enabled: false
+    secretName: platform-tls
+    clusterIssuer: ""
+
+gateway:
+  image:
+    repository: urumi-registry:5000/gateway
+    tag: "0.1.0"
+  seedWooUrl: http://woo-mcp.store.svc.cluster.local:3000/mcp
+  cookieSecure: "false"        # prod: "true" (HTTPS only)
+  resources:
+    requests: { cpu: 100m, memory: 128Mi }
+    limits: { cpu: 500m, memory: 256Mi }
+
+ingress:
+  enabled: true
+  className: traefik
+  host: app.localtest.me
+  tls:
+    enabled: false
+    secretName: platform-tls
+    clusterIssuer: ""

@@ -1,0 +1,92 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: gateway
+spec:
+  type: ClusterIP
+  selector: { app: gateway }
+  ports:
+    - port: 8080
+      targetPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: gateway }
+  template:
+    metadata:
+      labels: { app: gateway }
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+      containers:
+        - name: gateway
+          image: "{{ .Values.gateway.image.repository }}:{{ .Values.gateway.image.tag }}"
+          ports:
+            - containerPort: 8080
+          env:
+            - name: PORT
+              value: "8080"
+            - name: POSTGRES_PASSWORD
+              valueFrom: { secretKeyRef: { name: {{ include "platform.secretName" . }}, key: postgres-password } }
+            - name: DATABASE_URL            # $(VAR) is expanded by Kubernetes from the env var above
+              value: "postgres://gateway:$(POSTGRES_PASSWORD)@postgres:5432/gateway"
+            - name: ENCRYPTION_KEY
+              valueFrom: { secretKeyRef: { name: {{ include "platform.secretName" . }}, key: encryption-key } }
+            - name: SESSION_SECRET
+              valueFrom: { secretKeyRef: { name: {{ include "platform.secretName" . }}, key: session-secret } }
+            - name: ADMIN_PASSWORD
+              valueFrom: { secretKeyRef: { name: {{ include "platform.secretName" . }}, key: admin-password } }
+            - name: ADMIN_EMAIL
+              value: {{ .Values.admin.email | quote }}
+            - name: SEED_WOO_URL
+              value: {{ .Values.gateway.seedWooUrl | quote }}
+            - name: COOKIE_SECURE
+              value: {{ .Values.gateway.cookieSecure | quote }}
+          readinessProbe:
+            httpGet: { path: /readyz, port: 8080 }
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet: { path: /healthz, port: 8080 }
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: { drop: ["ALL"] }
+          resources:
+            {{- toYaml .Values.gateway.resources | nindent 12 }}
+{{- if .Values.ingress.enabled }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: platform
+  {{- if and .Values.ingress.tls.enabled .Values.ingress.tls.clusterIssuer }}
+  annotations:
+    cert-manager.io/cluster-issuer: {{ .Values.ingress.tls.clusterIssuer }}
+  {{- end }}
+spec:
+  ingressClassName: {{ .Values.ingress.className }}
+  {{- if .Values.ingress.tls.enabled }}
+  tls:
+    - hosts: [{{ .Values.ingress.host | quote }}]
+      secretName: {{ .Values.ingress.tls.secretName }}
+  {{- end }}
+  rules:
+    - host: {{ .Values.ingress.host | quote }}
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend: { service: { name: gateway, port: { number: 8080 } } }
+          - path: /mcp
+            pathType: Prefix
+            backend: { service: { name: gateway, port: { number: 8080 } } }
+{{- end }}

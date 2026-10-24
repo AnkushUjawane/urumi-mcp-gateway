@@ -4,3 +4,21 @@ admin:
 persistence:
   storageClass: local-path
   postgres: { size: 10Gi }
+gateway:
+  cookieSecure: "true"
+  image:
+    repository: registry.example.com/gateway   # CHANGE
+ingress:
+  host: app.example.com                        # CHANGE
+  tls:
+    enabled: true
+    clusterIssuer: letsencrypt-prod
+gateway:
+  cookieSecure: "true"
+  image:
+    repository: registry.example.com/gateway   # CHANGE
+ingress:
+  host: app.example.com                        # CHANGE
+  tls:
+    enabled: true
+    clusterIssuer: letsencrypt-prod
