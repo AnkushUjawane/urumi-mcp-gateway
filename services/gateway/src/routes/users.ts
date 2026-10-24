@@ -1,3 +1,4 @@
+import { listApiKeys } from "../auth/apiKeys.js";
 import type { FastifyInstance } from "fastify";
 import { z } from "zod";
 import { pool } from "../db.js";
@@ -10,6 +11,13 @@ export async function userRoutes(app: FastifyInstance) {
               (SELECT count(*)::int FROM api_keys k WHERE k.user_id = u.id AND k.revoked_at IS NULL) AS active_keys
          FROM users u ORDER BY u.created_at`);
     return rows;
+  });
+
+  // An admin can see a member's keys (prefix only, never the key) in order to revoke them.
+  app.get("/api/users/:id/keys", { preHandler: requireAdmin }, async (req, reply) => {
+    const { id } = req.params as { id: string };
+    if (!/^[0-9a-f-]{36}$/.test(id)) return reply.code(400).send({ error: "bad id" });
+    return listApiKeys(id);
   });
 
   app.patch("/api/users/:id", { preHandler: requireAdmin }, async (req, reply) => {
