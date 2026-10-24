@@ -1,0 +1,5 @@
+.badge { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 0.8rem; font-weight: 600; }
+.badge-connected { background: #dcfce7; color: #166534; }
+.badge-unreachable { background: #fee2e2; color: #991b1b; }
+.badge-disabled { background: #e5e7eb; color: #4b5563; }
+.badge-unknown { background: #fef9c3; color: #854d0e; }

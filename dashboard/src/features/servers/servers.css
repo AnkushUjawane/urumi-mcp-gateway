@@ -1,0 +1,13 @@
+.page-head { display: flex; justify-content: space-between; align-items: center; }
+.server-list { display: flex; flex-direction: column; gap: 12px; margin-top: 16px; }
+.server-head { display: flex; justify-content: space-between; gap: 16px; }
+.server-status { text-align: right; }
+.small { font-size: 0.8rem; }
+.actions { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+.form { display: flex; flex-direction: column; gap: 12px; }
+select { padding: 8px 10px; border: 1px solid #c9ced6; border-radius: 6px; font-size: 1rem; }
+button.secondary { background: #e5e7eb; color: #1b1f24; }
+button.danger { background: #b42318; }
+.tools { margin: 12px 0 0; padding-left: 18px; }
+.tools li { margin: 4px 0; }
+code { background: #eef0f3; padding: 1px 6px; border-radius: 4px; font-size: 0.85em; }
