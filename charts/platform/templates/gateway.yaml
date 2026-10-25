@@ -89,4 +89,7 @@ spec:
           - path: /mcp
             pathType: Prefix
             backend: { service: { name: gateway, port: { number: 8080 } } }
+          - path: /
+            pathType: Prefix
+            backend: { service: { name: dashboard, port: { number: 8080 } } }
 {{- end }}

@@ -22,3 +22,9 @@ ingress:
   tls:
     enabled: true
     clusterIssuer: letsencrypt-prod
+dashboard:
+  image:
+    repository: registry.example.com/dashboard   # CHANGE
+dashboard:
+  image:
+    repository: registry.example.com/dashboard   # CHANGE

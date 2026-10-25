@@ -50,3 +50,19 @@ ingress:
     enabled: false
     secretName: platform-tls
     clusterIssuer: ""
+
+dashboard:
+  image:
+    repository: urumi-registry:5000/dashboard
+    tag: "0.1.0"
+  resources:
+    requests: { cpu: 25m, memory: 32Mi }
+    limits: { cpu: 200m, memory: 96Mi }
+
+dashboard:
+  image:
+    repository: urumi-registry:5000/dashboard
+    tag: "0.1.0"
+  resources:
+    requests: { cpu: 25m, memory: 32Mi }
+    limits: { cpu: 200m, memory: 96Mi }
