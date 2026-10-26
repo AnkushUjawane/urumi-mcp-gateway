@@ -48,6 +48,7 @@ async function callProvider(p: Provider, messages: ChatMessage[], tools: ToolDef
   if (!res.ok) {
     // Log the status only. The body can echo prompt content, so we never log it.
     console.warn(`llm ${p.name}: HTTP ${res.status}`);
+    if (res.status === 400) console.warn(`llm ${p.name} 400 body: ${(await res.text()).slice(0, 300)}`);
     throw mapStatus(res.status);
   }
   const data: any = await res.json().catch(() => null);
@@ -66,8 +67,9 @@ async function callProvider(p: Provider, messages: ChatMessage[], tools: ToolDef
 }
 
 // Tries each configured provider in order (primary, then fallback).
-export async function chatCompletion(messages: ChatMessage[], tools: ToolDef[]): Promise<LlmReply> {
-  const providers = getProviders();
+export async function chatCompletion(messages: ChatMessage[], tools: ToolDef[], pin?: string): Promise<LlmReply> {
+  const all = getProviders();
+  const providers = pin ? all.filter((p) => p.name === pin) : all;   // once a provider answers, stick with it
   if (providers.length === 0) throw new LlmError("no LLM provider configured", false);
   const failures: string[] = [];
   for (const p of providers) {
