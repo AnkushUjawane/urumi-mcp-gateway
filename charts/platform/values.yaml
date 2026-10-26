@@ -72,7 +72,7 @@ llm:
   primary:
     name: gemini
     baseUrl: https://generativelanguage.googleapis.com/v1beta/openai
-    model: gemini-2.5-flash        # use a model id from the list in step 2
+    model: gemini-3.8-flash
     secretKey: gemini-api-key
   fallback:
     name: groq
