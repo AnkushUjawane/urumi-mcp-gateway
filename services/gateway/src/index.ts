@@ -1,3 +1,5 @@
+import { chatRoutes } from "./routes/chat.js";
+import { describeProviders } from "./chat/providers.js";
 import { inviteRoutes } from "./routes/invites.js";
 import { userRoutes } from "./routes/users.js";
 import { originCheck } from "./auth/csrf.js";
@@ -29,6 +31,7 @@ await app.register(toolRoutes);
 await app.register(gatewayApiRoutes);
 await app.register(auditRoutes);
 await app.register(mcpEndpoint);
+await app.register(chatRoutes);
 
 // Liveness: "is the process alive?" Never touches the DB, so a DB outage
 // doesn't make Kubernetes restart the gateway pointlessly.
@@ -51,6 +54,9 @@ async function main() {
   await seedServers((m) => app.log.info(m));
   await app.listen({ port: config.PORT, host: "0.0.0.0" });
   startManager((m) => app.log.info(m));
+  const llm = describeProviders();
+  if (llm.length === 0) app.log.warn("no LLM provider configured: chat is disabled (run scripts/set-llm-keys.sh)");
+  else app.log.info(`LLM providers: ${llm.map((p) => `${p.name}/${p.model} (${p.role})`).join(", ")}`);
 }
 
 for (const sig of ["SIGTERM", "SIGINT"] as const) {

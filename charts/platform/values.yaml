@@ -66,3 +66,16 @@ dashboard:
   resources:
     requests: { cpu: 25m, memory: 32Mi }
     limits: { cpu: 200m, memory: 96Mi }
+
+llm:
+  secretName: llm-secrets          # created by scripts/set-llm-keys.sh, never by Helm
+  primary:
+    name: gemini
+    baseUrl: https://generativelanguage.googleapis.com/v1beta/openai
+    model: gemini-2.5-flash        # use a model id from the list in step 2
+    secretKey: gemini-api-key
+  fallback:
+    name: groq
+    baseUrl: https://api.groq.com/openai/v1
+    model: llama-3.3-70b-versatile
+    secretKey: groq-api-key

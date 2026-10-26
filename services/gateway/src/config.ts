@@ -13,6 +13,16 @@ const schema = z.object({
   UPSTREAM_CALL_TIMEOUT_MS: z.coerce.number().int().default(15000),
   SEED_WOO_URL: z.string().url().optional(),
   REFRESH_INTERVAL_MS: z.coerce.number().int().default(30000),
+  LLM_PRIMARY_NAME: z.string().default("primary"),
+  LLM_PRIMARY_BASE_URL: z.string().url().optional(),
+  LLM_PRIMARY_MODEL: z.string().optional(),
+  LLM_PRIMARY_API_KEY: z.string().optional(),
+  LLM_FALLBACK_NAME: z.string().default("fallback"),
+  LLM_FALLBACK_BASE_URL: z.string().url().optional(),
+  LLM_FALLBACK_MODEL: z.string().optional(),
+  LLM_FALLBACK_API_KEY: z.string().optional(),
+  LLM_TIMEOUT_MS: z.coerce.number().int().default(45000),
+  LLM_MAX_ROUNDS: z.coerce.number().int().default(8),
 });
 
 const parsed = schema.safeParse(process.env);

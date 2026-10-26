@@ -48,6 +48,22 @@ spec:
               value: {{ .Values.gateway.seedWooUrl | quote }}
             - name: COOKIE_SECURE
               value: {{ .Values.gateway.cookieSecure | quote }}
+            - name: LLM_PRIMARY_NAME
+              value: {{ .Values.llm.primary.name | quote }}
+            - name: LLM_PRIMARY_BASE_URL
+              value: {{ .Values.llm.primary.baseUrl | quote }}
+            - name: LLM_PRIMARY_MODEL
+              value: {{ .Values.llm.primary.model | quote }}
+            - name: LLM_PRIMARY_API_KEY
+              valueFrom: { secretKeyRef: { name: {{ .Values.llm.secretName }}, key: {{ .Values.llm.primary.secretKey }}, optional: true } }
+            - name: LLM_FALLBACK_NAME
+              value: {{ .Values.llm.fallback.name | quote }}
+            - name: LLM_FALLBACK_BASE_URL
+              value: {{ .Values.llm.fallback.baseUrl | quote }}
+            - name: LLM_FALLBACK_MODEL
+              value: {{ .Values.llm.fallback.model | quote }}
+            - name: LLM_FALLBACK_API_KEY
+              valueFrom: { secretKeyRef: { name: {{ .Values.llm.secretName }}, key: {{ .Values.llm.fallback.secretKey }}, optional: true } }
           readinessProbe:
             httpGet: { path: /readyz, port: 8080 }
             initialDelaySeconds: 5
