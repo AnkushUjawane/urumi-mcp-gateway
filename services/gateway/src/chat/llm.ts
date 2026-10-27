@@ -21,7 +21,8 @@ export class LlmError extends Error {
 
 function mapStatus(status: number): LlmError {
   if (status === 401 || status === 403) return new LlmError("invalid API key", true);   // the other provider has its own key
-  if (status === 404) return new LlmError("model not found", true);
+  if (status === 404) return new  LlmError("model not found", true);
+  if (status === 413) return new LlmError("request too large for provider limits", true);
   if (status === 429) return new LlmError("rate limited", true);
   if (status >= 500) return new LlmError(`provider error (${status})`, true);
   return new LlmError(`request rejected (${status})`, false);                            // our request is wrong; retrying elsewhere hides the bug
@@ -38,6 +39,7 @@ async function callProvider(p: Provider, messages: ChatMessage[], tools: ToolDef
         messages,
         ...(tools.length ? { tools, tool_choice: "auto" } : {}),
         temperature: 0.2,
+        max_tokens: 1024,
       }),
       signal: AbortSignal.timeout(config.LLM_TIMEOUT_MS),
     });
@@ -48,7 +50,6 @@ async function callProvider(p: Provider, messages: ChatMessage[], tools: ToolDef
   if (!res.ok) {
     // Log the status only. The body can echo prompt content, so we never log it.
     console.warn(`llm ${p.name}: HTTP ${res.status}`);
-    if (res.status === 400) console.warn(`llm ${p.name} 400 body: ${(await res.text()).slice(0, 300)}`);
     throw mapStatus(res.status);
   }
   const data: any = await res.json().catch(() => null);

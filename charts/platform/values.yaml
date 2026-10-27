@@ -70,12 +70,13 @@ dashboard:
 llm:
   secretName: llm-secrets          # created by scripts/set-llm-keys.sh, never by Helm
   primary:
+    name: groq
+    baseUrl: https://api.groq.com/openai/v1
+    model: openai/gpt-oss-120b
+    secretKey: groq-api-key
+  fallback:
     name: gemini
     baseUrl: https://generativelanguage.googleapis.com/v1beta/openai
     model: gemini-3.8-flash
     secretKey: gemini-api-key
-  fallback:
-    name: groq
-    baseUrl: https://api.groq.com/openai/v1
-    model: openai/gpt-oss-safeguard-20b
-    secretKey: groq-api-key
+  timeoutMs: 20000

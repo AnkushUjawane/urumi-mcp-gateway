@@ -48,6 +48,8 @@ spec:
               value: {{ .Values.gateway.seedWooUrl | quote }}
             - name: COOKIE_SECURE
               value: {{ .Values.gateway.cookieSecure | quote }}
+            - name: LLM_TIMEOUT_MS
+              value: {{ .Values.llm.timeoutMs | quote }}
             - name: LLM_PRIMARY_NAME
               value: {{ .Values.llm.primary.name | quote }}
             - name: LLM_PRIMARY_BASE_URL
