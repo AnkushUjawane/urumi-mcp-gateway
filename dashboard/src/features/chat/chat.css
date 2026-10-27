@@ -1,0 +1,15 @@
+.chat { display: flex; flex-direction: column; min-height: calc(100vh - 56px); }
+.messages { flex: 1; display: flex; flex-direction: column; gap: 12px; margin: 16px 0; }
+.bubble { padding: 10px 14px; border-radius: 12px; max-width: 80%; white-space: pre-wrap; overflow-wrap: anywhere; }
+.bubble.user { align-self: flex-end; background: #2457d6; color: #fff; }
+.bubble.bot { background: #fff; border: 1px solid #e3e6ea; }
+.assistant { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; max-width: 90%; }
+.toolcard { border: 1px solid #e3e6ea; border-left-width: 4px; border-radius: 8px; background: #f9fafb; padding: 6px 10px; width: 100%; }
+.toolcard-running { border-left-color: #f59e0b; }
+.toolcard-ok { border-left-color: #16a34a; }
+.toolcard-error { border-left-color: #b42318; }
+.toolcard summary { cursor: pointer; }
+.toolcard-body pre { margin: 4px 0 8px; padding: 8px; background: #fff; border: 1px solid #e3e6ea; border-radius: 6px; overflow: auto; max-height: 220px; font-size: 0.8rem; white-space: pre-wrap; overflow-wrap: anywhere; }
+.suggestions { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; margin: 24px 0; flex: 1; }
+.composer { display: flex; gap: 8px; position: sticky; bottom: 0; background: #f5f6f8; padding: 12px 0; }
+.composer input { flex: 1; }

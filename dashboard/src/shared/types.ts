@@ -45,3 +45,20 @@ export type AuditRow = {
   error_message: string | null;
 };
 export type AuditResponse = { rows: AuditRow[]; next_before: string | null };
+
+export type ChatEvent =
+  | { type: "tool_call"; id: string; name: string; args: unknown }
+  | { type: "tool_result"; id: string; name: string; isError: boolean; preview: string }
+  | { type: "text"; text: string; provider: string }
+  | { type: "error"; message: string }
+  | { type: "done" };
+
+export type ToolStep = {
+  id: string; name: string; args: unknown;
+  status: "running" | "ok" | "error"; preview?: string;
+};
+
+export type UiMessage = {
+  id: number; role: "user" | "assistant"; text: string;
+  steps: ToolStep[]; provider?: string; error?: string; streaming?: boolean;
+};
