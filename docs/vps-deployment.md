@@ -1,6 +1,6 @@
 # Production-like deployment (VPS, k3s) and upgrades
 
-**Status: `<EDIT: "deployed and verified on <provider>, <domain>" OR "values prepared, not deployed on a VPS">`.**
+**Status: values prepared, not deployed on a VPS.** Local k3d (k3s) was used for all testing.
 
 ## What changes between local and VPS (Helm values only)
 
@@ -32,7 +32,7 @@
 
 7. Update `gateway.seedWooUrl` if needed, log in, and register `notes` and `utils` as in the README.
 
-`<VERIFY before claiming anything: every value above was written from the local setup and has not been run on a VPS unless you did so.>`
+Note: the production values and steps above were written from the local setup and have not been run on a VPS.
 
 ## Upgrade and rollback with Helm
 
