@@ -1,10 +1,11 @@
+import { isAllowed, type Role } from "./permissions.js";
 import { pool } from "../db.js";
 import { config } from "../config.js";
 import { withClient, UpstreamError } from "./upstream.js";
 import { getEntry, markUnreachable } from "./manager.js";
 import { splitToolName } from "./aggregator.js";
 
-export type Caller = { id: string; email: string };
+export type Caller = { id: string; email: string; role: Role };
 export type Source = "mcp" | "chat" | "api";
 export type Outcome = "ok" | "error" | "timeout" | "denied";
 export type ToolResult = { content: any[]; isError?: boolean };
@@ -17,7 +18,7 @@ const errResult = (msg: string): ToolResult => ({ isError: true, content: [{ typ
 
 // Metadata only. We deliberately do NOT store arguments or results: they can hold private data.
 export async function recordAudit(a: {
-  user: Caller; source: Source; server: string | null; tool: string;
+  user: { id: string; email: string }; source: Source; server: string | null; tool: string;
   ms: number; status: Outcome; message: string | null;
 }) {
   try {
@@ -43,6 +44,8 @@ export async function callToolAs(user: Caller, source: Source, fullName: string,
     const parts = splitToolName(fullName);
     if (!parts) return fail("error", `Unknown tool '${fullName}'. Tool names look like 'server__tool'.`);
     slug = parts.slug; tool = parts.tool;
+    if (!(await isAllowed(user.role, fullName)))
+      return fail("denied", `Tool '${fullName}' is not permitted for your role.`);
 
     const row = (await pool.query("SELECT * FROM servers WHERE slug = $1", [slug])).rows[0];
     if (!row) return fail("error", `Unknown tool '${fullName}'.`);

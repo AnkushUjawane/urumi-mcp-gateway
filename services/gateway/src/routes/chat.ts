@@ -25,7 +25,7 @@ export async function chatRoutes(app: FastifyInstance) {
     if (!body.success) return reply.code(400).send({ error: "send {messages:[{role,content}]} (max 20, last from user)" });
     if (describeProviders().length === 0) return reply.code(503).send({ error: "chat is not configured (no LLM key)" });
 
-    const user = { id: req.user!.id, email: req.user!.email };
+    const user = { id: req.user!.id, email: req.user!.email, role: req.user!.role };
     if (running.has(user.id)) return reply.code(429).send({ error: "a chat request is already running; wait for it to finish" });
     running.add(user.id);
 

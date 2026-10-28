@@ -1,3 +1,4 @@
+import {filterTools} from "../mcp/permissions.js";
 import { config } from "../config.js";
 import { listAggregatedTools } from "../mcp/aggregator.js";
 import { callToolAs, type Caller } from "../mcp/callTool.js";
@@ -36,8 +37,8 @@ function compact(s: any): any {
   return s;
 }
 
-function toolDefs(): ToolDef[] {
-  const defs = listAggregatedTools().map((t) => ({
+async function toolDefs(user: Caller): Promise<ToolDef[]> {
+  const defs = (await filterTools(user.role, listAggregatedTools())).map((t) => ({
     type: "function" as const,
     function: {
       name: t.name,
@@ -52,7 +53,7 @@ const textOf = (content: any[]): string =>
   content.map((c) => (c?.type === "text" ? String(c.text) : `[${c?.type ?? "unknown"} content]`)).join("\n");
 
 export async function runAgent(user: Caller, history: HistoryItem[], emit: (e: AgentEvent) => void): Promise<void> {
-  const tools = toolDefs();
+  const tools = await toolDefs(user);
   const messages: ChatMessage[] = [
     { role: "system", content: SYSTEM.replace("{{DATE}}", new Date().toISOString().slice(0, 10)) },
     ...history.slice(-MAX_HISTORY).map((h) => ({ role: h.role, content: h.content.slice(0, MAX_MSG_CHARS) }) as ChatMessage),

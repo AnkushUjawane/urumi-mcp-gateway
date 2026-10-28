@@ -1,3 +1,4 @@
+import { filterTools } from "./permissions.js";
 import type { FastifyInstance } from "fastify";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
@@ -24,13 +25,19 @@ export async function mcpEndpoint(app: FastifyInstance) {
       // Same response for unknown, revoked and disabled: it doesn't reveal which keys exist.
       return reply.code(401).header("WWW-Authenticate", "Bearer").send({ error: "invalid or revoked API key" });
     }
-    const user = { id: auth.user.id, email: auth.user.email };
+    const user = { id: auth.user.id, email: auth.user.email, role: auth.user.role };
 
     // 2. A fresh server per request (stateless): any gateway replica can answer any request.
     const server = new Server({ name: "urumi-gateway", version: "0.1.0" }, { capabilities: { tools: {} } });
 
     server.setRequestHandler(ListToolsRequestSchema, async () => ({
       tools: listAggregatedTools().map((t) => ({
+        name: t.name, description: t.description, inputSchema: t.inputSchema,
+      })),
+    }));
+
+    server.setRequestHandler(ListToolsRequestSchema, async () => ({
+      tools: (await filterTools(user.role, listAggregatedTools())).map((t) => ({
         name: t.name, description: t.description, inputSchema: t.inputSchema,
       })),
     }));

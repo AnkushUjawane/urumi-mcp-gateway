@@ -1,3 +1,4 @@
+import { toolRuleRoutes } from "./routes/toolRules.js";
 import { chatRoutes } from "./routes/chat.js";
 import { describeProviders } from "./chat/providers.js";
 import { inviteRoutes } from "./routes/invites.js";
@@ -32,6 +33,7 @@ await app.register(gatewayApiRoutes);
 await app.register(auditRoutes);
 await app.register(mcpEndpoint);
 await app.register(chatRoutes);
+await app.register(toolRuleRoutes);
 
 // Liveness: "is the process alive?" Never touches the DB, so a DB outage
 // doesn't make Kubernetes restart the gateway pointlessly.
